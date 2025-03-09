@@ -21,7 +21,7 @@ public class UserController {
     @RequestMapping("/")
     public String getHomePage(Model model) {
         String test = this.userService.handleHello();
-        model.addAttribute("test", test);
+        model.addAttribute("test", "test");
         model.addAttribute("meap", "From controller with model");
         return "home_page";
     }
@@ -35,11 +35,8 @@ public class UserController {
 
     @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
     public String createUserPage(@ModelAttribute("user") User user, Model model) {
-        // Handle the submitted user data
         System.out.println("Received user: " + user);
-
-        // Add user back to model for form redisplay
-        model.addAttribute("user", user);
+        this.userService.handleCreateUser(user);
         return "home_page";
     }
 }
