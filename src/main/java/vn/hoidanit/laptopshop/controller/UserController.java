@@ -1,8 +1,11 @@
 package vn.hoidanit.laptopshop.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -20,7 +23,7 @@ public class UserController {
 
     @RequestMapping("/")
     public String getHomePage(Model model) {
-        String test = this.userService.handleHello();
+        List<User> users = this.userService.getAllUsersByEmail("meap@gmail.com");
         model.addAttribute("test", "test");
         model.addAttribute("meap", "From controller with model");
         return "home_page";
@@ -28,15 +31,29 @@ public class UserController {
 
     @RequestMapping("/admin/user")
     public String getUserPage(Model model) {
-        // Add a User object to the model for form binding
+        List<User> users = this.userService.getAllUsers();
+        model.addAttribute("users", users);
+        return "admin/user/table-user";
+
+    }
+
+    @RequestMapping("/admin/user/{id}")
+    public String getUserDetailPage(Model model, @PathVariable long id) {
+        User user = this.userService.getUserById(id);
+        model.addAttribute("id", id);
+        model.addAttribute("user", user);
+        return "admin/user/show";
+    }
+
+    @RequestMapping("/admin/user/create") // GET
+    public String getCreateUserPage(Model model) {
         model.addAttribute("user", new User());
         return "admin/user/create";
     }
 
     @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
     public String createUserPage(@ModelAttribute("user") User user, Model model) {
-        System.out.println("Received user: " + user);
         this.userService.handleCreateUser(user);
-        return "home_page";
+        return "redirect:/admin/user";
     }
 }
